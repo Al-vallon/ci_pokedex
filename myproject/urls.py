@@ -32,4 +32,4 @@ urlpatterns = [
     # path('game', teamsview.manageTeam, name='manageTeam')
 ]
 
-handler404 = 'pokedex.views.custom_404';
+handler404 = 'pokedex.views.custom_404'
