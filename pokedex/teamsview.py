@@ -70,10 +70,17 @@ def manageTeam(request):
                 pokemon_6=pokemon_name_6,
             )
             team.save()
-            messages.success(request, f"Team '{name}' created successfully!")
+            messages.success(
+                request,
+                f"Team '{name}' created successfully!"
+            )
             return render(
-                request, 'teams.html',
-                {'teams': Teams.objects.all(), 'all_pokemons': all_pokemons}
+                request,
+                'teams.html',
+                {
+                    'teams': Teams.objects.all(),
+                    'all_pokemons': all_pokemons
+                }
             )
         else:
             messages.error(request, "Team could not be created. Name is required.")
@@ -198,7 +205,9 @@ def battle(request):
             winner = team2.name
 
         return JsonResponse(
-            {'message': f"The winner is {winner}!"},
+            {
+                'message': f"The winner is {winner}!"
+            },
             status=200
         )
     except json.JSONDecodeError:
