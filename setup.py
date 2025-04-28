@@ -18,8 +18,6 @@ setup(
     },
     classifiers=[
         'Programming Language :: Python :: 3',
-        'Framework :: Django',
-        'Operating System :: OS Independent',
     ],
     python_requires='>=3.8',
 )

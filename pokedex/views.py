@@ -17,8 +17,16 @@ def getAllPokemon(request):
         return HttpResponse("Pokémons not found", status=404)
     
     pokemons = data.get("results", [])
-    next_offset = data.get("next", "").split("offset=")[-1].split("&")[0] if data.get("next") else None
-    previous_offset = data.get("previous", "").split("offset=")[-1].split("&")[0] if data.get("previous") else None
+    next_offset = (
+        data.get("next", "").split("offset=")[-1].split("&")[0]
+        if data.get("next")
+        else None
+    )
+    previous_offset = (
+        data.get("previous", "").split("offset=")[-1].split("&")[0]
+        if data.get("previous")
+        else None
+    )
 
     all_pokemons = []
     for pokemon in pokemons:
@@ -34,20 +42,23 @@ def getAllPokemon(request):
                 'image_url': image_url,
             })
         except requests.exceptions.RequestException:
-            continue  
-    return render(request, "pokedex.html", {
-        'all_pokemons': all_pokemons,
-        "next_offset": next_offset,
-        "previous_offset": previous_offset,
-        "current_offset": offset,
-    })
+            continue
+    return render(
+        request,
+        "pokedex.html",
+        {
+            'all_pokemons': all_pokemons,
+            "next_offset": next_offset,
+            "previous_offset": previous_offset,
+            "current_offset": offset,
+        }
+    )
 
 def getPokemonById(request, id):
     url = f"{API_URL}{id}"
     response = requests.get(url)
     if response.status_code == 200:
         data = response.json()
-        print(f"data: {data}")
         return render(request, "pokemon.html", {"pokemon": data})
     else:
         return HttpResponse("Pokémon not found", status=404)
@@ -67,7 +78,10 @@ def searchPokemon(request):
     except requests.exceptions.RequestException:
         return HttpResponse("Pokémons not found", status=404)
     
-    matching_pokemons = [pokemon for pokemon in data.get("results", []) if pokemon_name in pokemon['name']]
+    matching_pokemons = [
+        pokemon for pokemon in data.get("results", [])
+        if pokemon_name in pokemon['name']
+    ]
     
     if not matching_pokemons:
         return HttpResponse("No matching Pokémon found", status=404)
@@ -88,9 +102,13 @@ def searchPokemon(request):
         except requests.exceptions.RequestException:
             continue
     
-    return render(request, "pokedex.html", {
-        'all_pokemons': all_pokemons,
-        "next_offset": None,
-        "previous_offset": None,
-        "current_offset": 0,
-    })
+    return render(
+        request,
+        "pokedex.html",
+        {
+            'all_pokemons': all_pokemons,
+            "next_offset": None,
+            "previous_offset": None,
+            "current_offset": 0,
+        }
+    )
