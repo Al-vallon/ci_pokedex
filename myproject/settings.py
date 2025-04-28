@@ -141,7 +141,7 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-#CSRF_COOKIE_SECURE manages whether to use a secure cookie for the CSRF cookie.
+# CSRF_COOKIE_SECURE manages whether to use a secure cookie for the CSRF cookie.
 # CSRF_COOKIE_SECURE = True
 
 CSRF_TRUSTED_ORIGINS = ['http://localhost:8000']
