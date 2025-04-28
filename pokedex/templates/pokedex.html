@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Pokedex</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'styles/pokedex.css' %}" />
+  </head>
+  <body>
+    <nav class="navbar">
+      <div class="logo">
+        <a href="/api/pokemons">
+          <img src="{% static 'pokedex/logo.png' %}" alt="Logo" />
+        </a>
+      </div>
+      <div class="nav-buttons">
+        <a href="/teams" class="nav-button">Create a team</a>
+        <a href="/game" class="nav-button">Play now</a>
+      </div>
+      <form method="get" action="/api/search_pokemon/" class="search-form">
+        <input
+          type="text"
+          id="pokemon-search"
+          name="pokemon-name"
+          list="pokemon-names"
+          placeholder="Research a Pokemon"
+        />
+        <datalist id="pokemon-names">
+          {% for pokemon in all_pokemons %}
+          <option value="{{ pokemon.name }}" data-name="{{ pokemon.name }}">
+            {{ pokemon.name }}
+          </option>
+          {% endfor %}
+        </datalist>
+        <button type="submit">Search 🔍</button>
+      </form>
+    </nav>
+    <h1 class="title">Pokédex</h1>
+
+    <ul class="pokemon-list">
+      {% for pokemon in all_pokemons %}
+      <li class="pokemon-item">
+        <a
+          href="/api/pokemons/{{ forloop.counter|add:current_offset}}"
+          class="pokemon-link"
+        >
+          <img
+            src="{{ pokemon.image_url }}"
+            alt="{{ pokemon.name }}"
+            class="pokemon-image"
+          />
+          <span>{{ pokemon.name }}</span>
+        </a>
+        <button class="addPoke">Add to team</button>
+      </li>
+      {% endfor %}
+    </ul>
+
+    <div class="pagination">
+      <a
+        class="pagination-link previous-link"
+        href="?offset={{ previous_offset }}&limit=20"
+        {%
+        if
+        not
+        previous_offset
+        %}style="display:none;"
+        {%
+        endif
+        %}
+        >Previous</a
+      >
+      <a
+        class="pagination-link next-link"
+        href="?offset={{ next_offset }}&limit=20"
+        {%
+        if
+        not
+        next_offset
+        %}style="display:none;"
+        {%
+        endif
+        %}
+        >Next</a
+      >
+    </div>
+  </body>
+</html>

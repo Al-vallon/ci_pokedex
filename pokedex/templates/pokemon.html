@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokémon Details</title>
+    <link rel="icon" href="{% static 'pokedex/favicon.ico' %}" type="image/x-icon">
+    <link rel="stylesheet" href="{% static 'styles/pokemon.css' %}">
+</head>
+<body class="pokemon-body">
+    <h1 class="pokemon-name">{{ pokemon.name }}</h1>
+    <div style="display:flex;">
+        <a class="pagination-link"
+           href="/api/pokemons"
+        >Back to pokedex</a>
+
+        <a class="pagination-link previous-link"
+           href="/api/pokemons/{{ pokemon.id|add:-1 }}"
+           {% if pokemon.id > 1 %}
+             style="display:block;"
+           {% else %}
+             style="display:none;"
+           {% endif %}
+        >Previous</a>
+      
+        <a class="pagination-link next-link"
+           href="/api/pokemons/{{ pokemon.id|add:1 }}"
+           {% if pokemon.id < 151 %}
+             style="display:block;"
+           {% else %}
+             style="display:none;"
+           {% endif %}
+        >Next</a>
+      </div>
+      
+    <p class="pokemon-id">ID: {{ pokemon.id }}</p>
+    <p class="pokemon-height">Height: {{ pokemon.height }}</p>
+    <p class="pokemon-weight">Weight: {{ pokemon.weight }}</p>
+    <img class="pokemon-sprite" src="{{ pokemon.sprites.front_default }}" alt="{{ pokemon.name }}">
+    <p class="pokemon-types">Types:
+        <ul class="types-list">
+            {% for type in pokemon.types %}
+                <li class="type-item">{{ type.type.name }}</li>
+            {% endfor %}
+        </ul>
+    </p>
+    <p class="pokemon-abilities">Abilities:
+        <ul class="abilities-list">
+            {% for ability in pokemon.abilities %}
+                <li class="ability-item">{{ ability.ability.name }}</li>
+            {% endfor %}
+        </ul>
+    </p>
+    <p class="pokemon-stats">Stats:
+        <ul class="stats-list">
+            {% for stat in pokemon.stats %}
+                <li class="stat-item">{{ stat.stat.name }}: {{ stat.base_stat }}</li>
+            {% endfor %}
+        </ul>
+    </p>
+    <p class="pokemon-cries">cries:
+        <audio controls autoplay>
+            <source src="https://raw.githubusercontent.com/PokeAPI/cries/main/cries/pokemon/latest/{{ pokemon.id }}.ogg" type="audio/ogg">
+        </audio>
+    </p>
+</body>
+</html>
