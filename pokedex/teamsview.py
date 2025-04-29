@@ -27,7 +27,6 @@ def manageTeam(request):
                 team.pokemon_1, team.pokemon_2, team.pokemon_3,
                 team.pokemon_4, team.pokemon_5, team.pokemon_6
             ]
-        
         all_pokemons = []
         for pokemon in pokemons:
             pokemon_url = pokemon['url']
