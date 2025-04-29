@@ -1,8 +1,7 @@
-from django.test import TestCase, RequestFactory
-from django.urls import reverse
+from django.test import TestCase #type: ignore
+from django.urls import reverse#type: ignore
 from unittest.mock import patch, MagicMock
-from pokedex.views import getAllPokemon
-import json
+
 
 class GetPokemonByIdTests(TestCase):
     @patch('pokedex.views.requests.get')
