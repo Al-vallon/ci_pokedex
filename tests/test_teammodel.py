@@ -1,9 +1,8 @@
 from pokedex.models import Teams
-from django.test import TestCase # type: ignore
+from django.test import TestCase  # type: ignore
 
 class TeamModelTests(TestCase):
     def test_team_creation(self):
-        # Créer une équipe et vérifier ses attributs
         team = Teams.objects.create(
             name="Team Rocket",
             pokemon_1="meowth",
