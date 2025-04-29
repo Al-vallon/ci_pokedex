@@ -10,7 +10,7 @@ on:
 jobs:
   # Bloc Lint
   lint_code:
-    name: Lint
+    name: Lint Code
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -82,7 +82,7 @@ jobs:
       - run: docker build -t superpokedex-web:latest .
   
   npm_pack:
-    name: NPM Pack 
+    name: NPM Package
     runs-on: ubuntu-latest
     needs: [sonarcloud_check, trivy_scan]
     steps:
