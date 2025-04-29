@@ -1,5 +1,5 @@
 from pokedex.models import Teams
-from django.test import TestCase #type: ignore
+from django.test import TestCase # type: ignore
 
 class TeamModelTests(TestCase):
     def test_team_creation(self):

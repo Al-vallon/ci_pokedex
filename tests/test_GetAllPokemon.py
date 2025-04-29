@@ -1,5 +1,5 @@
-from django.test import TestCase, RequestFactory#type: ignore
-from django.urls import reverse  #type: ignore
+from django.test import TestCase, RequestFactory  # type: ignore
+from django.urls import reverse   # type: ignore
 from unittest.mock import patch, MagicMock
 from pokedex.views import getAllPokemon
 
