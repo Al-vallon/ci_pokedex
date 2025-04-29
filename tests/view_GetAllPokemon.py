@@ -2,7 +2,6 @@ from django.test import TestCase, RequestFactory
 from django.urls import reverse
 from unittest.mock import patch, MagicMock
 from pokedex.views import getAllPokemon
-import json
 
 class GetAllPokemonTests(TestCase):
     def setUp(self):
@@ -20,8 +19,7 @@ class GetAllPokemonTests(TestCase):
             'next': 'https://pokeapi.co/api/v2/pokemon?offset=20&limit=20',
             'previous': None
         }
-        mock_get.return_value = mock_response
-        
+        mock_get.return_value = mock_response  
         mock_pokemon_response = MagicMock()
         mock_pokemon_response.status_code = 200
         mock_pokemon_response.json.return_value = {
@@ -33,8 +31,6 @@ class GetAllPokemonTests(TestCase):
         
         request = self.factory.get(reverse('getAllPokemon'))
         response = getAllPokemon(request)
-        
-
         self.assertEqual(response.status_code, 200)
 
         self.assertTemplateUsed('pokedex.html')
