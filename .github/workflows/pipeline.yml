@@ -22,7 +22,7 @@ jobs:
   
   # Bloc Tests
   unit_tests:
-    name: Unit Tests ✅
+    name: Unit Tests 
     runs-on: ubuntu-latest
     needs: [lint_code]
     steps:
@@ -36,7 +36,7 @@ jobs:
 
   # Bloc Code Security
   sonarcloud_check:
-    name: SonarCloud 🔍
+    name: SonarCloud 
     runs-on: ubuntu-latest
     needs: [unit_tests]
     steps:
@@ -51,7 +51,7 @@ jobs:
           SONAR_ORGANIZATION: alexandrevallon
   
   trivy_scan:
-    name: Trivy Scan 🛡
+    name: Trivy Scan 
     runs-on: ubuntu-latest
     needs: [unit_tests] 
     steps:
@@ -74,15 +74,15 @@ jobs:
   
   # Bloc Package
   docker_build:
-    name: Docker Build 🐳
+    name: Docker Build 
     runs-on: ubuntu-latest
     needs: [sonarcloud_check, trivy_scan]
     steps:
       - uses: actions/checkout@v3
-      - run: docker build -t your-image-name .
+      - run: docker build -t superpokedex-web:latest .
   
   npm_pack:
-    name: NPM Pack 📦
+    name: NPM Pack 
     runs-on: ubuntu-latest
     needs: [sonarcloud_check, trivy_scan]
     steps:
