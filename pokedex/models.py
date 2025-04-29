@@ -24,4 +24,4 @@ class Teams(models.Model):
     #     super().save(*args, **kwargs)
     
     def __str__(self):
-        return (self.id, 'Team: ' + self.name) 
+        return f"{self.id}, Team: {self.name}" 
