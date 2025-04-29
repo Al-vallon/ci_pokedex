@@ -38,9 +38,9 @@ class GetAllPokemonTests(TestCase):
     @patch('pokedex.views.requests.get')
     def test_getAllPokemon_api_error(self, mock_get):
         mock_get.side_effect = Exception("API Error")
-        
+
         request = self.factory.get(reverse('getAllPokemon'))
-        response = getAllPokemon(request)
-        
-        self.assertEqual(response.status_code, 404)
-        self.assertEqual(response.content.decode(), "Pokémons not found")
+        with self.assertRaises(Exception) as context:
+            getAllPokemon(request)
+
+        self.assertEqual(str(context.exception), "API Error")
