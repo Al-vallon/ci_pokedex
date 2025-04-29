@@ -71,7 +71,7 @@ on:
 jobs:
   # Bloc Lint
   lint_code:
-    name: Lint 🧹
+    name: Lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -92,9 +92,10 @@ jobs:
         with:
           python-version: '3.10'
       - run: pip install -r requirements.txt
+      - run: pip install pytest 
       - run: pytest
 
-  # Bloc Quality
+  # Bloc Code Security
   sonarcloud_check:
     name: SonarCloud 🔍
     runs-on: ubuntu-latest
