@@ -6,6 +6,10 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  
+permissions:
+  contents: read
+  packages: write
 
 jobs:
   # Bloc Lint
@@ -33,22 +37,6 @@ jobs:
       - run: pip install -r requirements.txt
       - run: pip install pytest 
       - run: pytest
-
-  # Bloc Code Security
-  # sonarcloud_check:
-  #   name: SonarCloud 
-  #   runs-on: ubuntu-latest
-  #   needs: [unit_tests]
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #     - name: SonarCloud Scan
-  #       uses: sonarsource/sonarcloud-github-action@v2
-  #       with:
-  #         projectBaseDir: .
-  #       env:
-  #         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-  #         SONAR_PROJECT_KEY: alexandrevallon_ci-pokedex
-  #         SONAR_ORGANIZATION: alexandrevallon
 
   codeql_analysis:
     name: CodeQL Analysis
@@ -101,6 +89,32 @@ jobs:
           severity: 'CRITICAL,HIGH'
   
   # Bloc Package
+
+  python_package:
+    name: Build Python Package
+    runs-on: ubuntu-latest
+    needs: [trivy_scan]
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install build tool
+        run: pip install build
+
+      - name: Build wheel package
+        run: python -m build
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: python-package
+          path: dist/*.whl
+    
+
   docker_build:
     name: Docker Build 
     runs-on: ubuntu-latest
@@ -109,11 +123,32 @@ jobs:
       - uses: actions/checkout@v3
       - run: docker build -t superpokedex-web:latest .
   
-  npm_pack:
-    name: NPM Package
+  docker_push:
+    name: Push Docker Image
     runs-on: ubuntu-latest
-    needs: [codeql_analysis, trivy_scan]
+    needs: [trivy_scan]
+    permissions:
+      contents: read
+      packages: write
     steps:
       - uses: actions/checkout@v3
-      - run: npm install
-      - run: npm pack
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        run: |
+          docker build -t ghcr.io/${{ github.repository_owner }}/superpokedex-web:latest .
+          docker push ghcr.io/${{ github.repository_owner }}/superpokedex-web:latest
+
+          docker rmi ghcr.io/${{ github.repository_owner }}/superpokedex-web:latest || true  
+
+
+  
