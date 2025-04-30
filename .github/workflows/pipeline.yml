@@ -35,20 +35,44 @@ jobs:
       - run: pytest
 
   # Bloc Code Security
-  sonarcloud_check:
-    name: SonarCloud 
+  # sonarcloud_check:
+  #   name: SonarCloud 
+  #   runs-on: ubuntu-latest
+  #   needs: [unit_tests]
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - name: SonarCloud Scan
+  #       uses: sonarsource/sonarcloud-github-action@v2
+  #       with:
+  #         projectBaseDir: .
+  #       env:
+  #         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  #         SONAR_PROJECT_KEY: alexandrevallon_ci-pokedex
+  #         SONAR_ORGANIZATION: alexandrevallon
+
+  codeql_analysis:
+    name: CodeQL Analysis
     runs-on: ubuntu-latest
     needs: [unit_tests]
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
     steps:
-      - uses: actions/checkout@v3
-      - name: SonarCloud Scan
-        uses: sonarsource/sonarcloud-github-action@v2
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v2
         with:
-          projectBaseDir: .
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_PROJECT_KEY: alexandrevallon_ci-pokedex
-          SONAR_ORGANIZATION: alexandrevallon
+          languages: python
+
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v2
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v2
+
   
   trivy_scan:
     name: Trivy Scan 
@@ -76,7 +100,7 @@ jobs:
   docker_build:
     name: Docker Build 
     runs-on: ubuntu-latest
-    needs: [sonarcloud_check, trivy_scan]
+    needs: [codeql_analysis, trivy_scan]
     steps:
       - uses: actions/checkout@v3
       - run: docker build -t superpokedex-web:latest .
@@ -84,7 +108,7 @@ jobs:
   npm_pack:
     name: NPM Package
     runs-on: ubuntu-latest
-    needs: [sonarcloud_check, trivy_scan]
+    needs: [codeql_analysis, trivy_scan]
     steps:
       - uses: actions/checkout@v3
       - run: npm install
