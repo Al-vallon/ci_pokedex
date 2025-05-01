@@ -8,8 +8,6 @@ setup(
     install_requires=[
         'django>=4.0',
         'requests',
-        
-        # ajoute ici les autres libs que tu utilises si besoin
     ],
     entry_points={
         'console_scripts': [
