@@ -1,77 +1,110 @@
-# Pokedex Application
+# SuperPokedex
 
 ## Description
 
-This is a Pokedex application built using Django. The app allows users to browse, search, and view detailed information about different Pokémon. It includes features such as filtering Pokémon by type, abilities, and other characteristics. The application is designed to be run in a Docker container for easy deployment and portability.
+SuperPokedex est une application web construite avec Django qui permet aux utilisateurs de parcourir, rechercher et consulter des informations détaillées sur différents Pokémon. L'application offre des fonctionnalités de filtrage par type, capacités et autres caractéristiques.
 
-## Features
+## Fonctionnalités principales
 
-- Browse a list of Pokémon.
-- Filter Pokémon by type, ability, and other attributes.
-- View detailed information about each Pokémon.
-- API endpoints for interacting with Pokémon data.
-- Dockerized for easy setup and deployment.
-
-## Installation
-
-### Prerequisites
-
-- Docker (version 20.10 or higher)
-- Docker Compose (optional but recommended)
-
-### Running the Application
-
-To run the Pokedex application locally, follow these steps:
-
-1. **Clone the repository:**
-
-   ```bash
-   git clone https://github.com/your-username/pokedex.git
-   ```
-
-# Pokedex Application
-
-## Description
-
-This is a Pokedex application built using Django. The app allows users to browse, search, and view detailed information about different Pokémon. It includes features such as filtering Pokémon by type, abilities, and other characteristics. The application is designed to be run in a Docker container for easy deployment and portability.
-
-## Features
-
-- Browse a list of Pokémon.
-- Filter Pokémon by type, ability, and other attributes.
-- View detailed information about each Pokémon.
-- API endpoints for interacting with Pokémon data.
-- Dockerized for easy setup and deployment.
+- Navigation dans la liste complète des Pokémon
+- Filtrage par type, capacité et autres attributs
+- Affichage détaillé des informations pour chaque Pokémon
+- API RESTful pour accéder aux données Pokémon
+- Déploiement simplifié via Docker
 
 ## Installation
 
-### Prerequisites
+### Prérequis
 
-- Docker (version 20.10 or higher)
-- Docker Compose (optional but recommended)
+- Docker (version 20.10 ou supérieure)
+- Docker Compose (recommandé)
 
-### Running the Application
+### Option 1 : Utiliser l'image Docker prête à l'emploi
 
-To run the Pokedex application locally, follow these steps:
+L'image Docker est automatiquement générée par notre pipeline CI et disponible sur GitHub Container Registry :
 
-1. **Clone the repository:**
+```bash
+# Télécharger l'image
+docker pull ghcr.io/al-vallon/ci_pokedex/superpokedex-web:latest
 
+# Lancer le conteneur
+docker run -p 8000:8000 ghcr.io/al-vallon/ci_pokedex/superpokedex-web:latest
+```
+
+### Option 2 : Installation locale
+
+1. **Cloner le dépôt :**
    ```bash
-   git clone https://github.com/your-username/pokedex.git
+   git clone https://github.com/Al-vallon/ci_pokedex.git
+   cd ci_pokedex
    ```
 
-2. Build and run the Docker container:
+2. **Construire et lancer le conteneur Docker :**
+   ```bash
+   # Avec Docker Compose
+   docker-compose up --build
+   
+   # Ou directement avec Docker
+   docker build -t superpokedex .
+   docker run -p 8000:8000 superpokedex
+   ```
 
-If you're using Docker Compose, you can build and run the container by executing:
+3. **Accéder à l'application :**
+   Une fois le conteneur lancé, ouvrez votre navigateur et accédez à [http://localhost:8000](http://localhost:8000)
 
-docker-compose up --build
+4. **Appliquer les migrations (première utilisation) :**
+   ```bash
+   docker exec -it superpokedex python manage.py migrate
+   ```
 
-3. Access the application:
+### Option 3 : Installer le package Python
 
-Once the container is running, you can access the application by navigating to http://localhost:8000 in your web browser.
+Le package Python de SuperPokedex est généré par notre pipeline CI.
 
-4. Apply database migrations:
+Pour plus d'informations sur l'accès et l'installation du package, consultez la [documentation CI](CI.md).
 
-If you're running the application for the first time, you need to apply the database migrations. You can do this by running the following command inside the Docker container:
+## Développement
 
-docker exec -it pokedex_container_name python manage.py migrate
+### Structure du projet
+
+```
+superpokedex/
+├── pokedex/          # Application Django principale
+├── myproject/        # Configuration projet Django
+├── tests/            # Tests unitaires et d'intégration
+├── templates/        # Templates HTML
+├── static/           # Fichiers statiques (CSS, JS, images)
+├── manage.py         # Script de gestion Django
+├── requirements.txt  # Dépendances Python
+└── Dockerfile        # Instructions de construction du conteneur
+```
+
+### Tests
+
+Le projet utilise pytest pour les tests unitaires et d'intégration. Pour exécuter les tests localement :
+
+```bash
+pip install -r requirements.txt
+pytest
+```
+
+Les tests couvrent :
+- Tests fonctionnels de l'API Pokémon
+- Tests des modèles de données
+- Tests d'intégration
+
+## Intégration Continue
+
+SuperPokedex utilise GitHub Actions pour l'intégration continue, avec les étapes suivantes :
+- Vérification du style de code (lint) avec flake8
+- Exécution des tests unitaires avec pytest
+- Analyse de sécurité du code (CodeQL)
+- Scan de vulnérabilités (Trivy)
+- Génération du package Python
+- Construction et publication de l'image Docker
+
+Pour plus de détails sur le pipeline CI, consultez la [documentation CI complète](CI.md).
+
+## Licence
+
+Ce projet est sous licence MIT. Voir le fichier LICENSE pour plus de détails.
