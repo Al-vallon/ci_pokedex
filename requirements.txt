@@ -1,4 +1,4 @@
-django==4.2.26
+django==4.2.27
 requests==2.32.4
 setuptools==80.0.0
 autopep8 == 2.3.2
