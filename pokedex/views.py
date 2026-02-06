@@ -51,7 +51,13 @@ def getAllPokemon(request):
     )
 
 def getPokemonById(request, id):
-    url = f"{API_URL}{id}"
+    try:
+        pokemon_id = int(id)
+        if pokemon_id <= 0:
+            return HttpResponse("Invalid Pokémon ID", status=400)
+    except (TypeError, ValueError):
+        return HttpResponse("Invalid Pokémon ID", status=400)
+    url = f"{API_URL}{pokemon_id}"
     response = requests.get(url)
     if response.status_code == 200:
         data = response.json()
