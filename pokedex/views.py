@@ -57,7 +57,9 @@ def getAllPokemon(request):
         if not _is_allowed_pokemon_detail_url(pokemon_url):
             continue
         try:
-            response_pokemon = requests.get(pokemon_url)
+            pokemon_id = pokemon_url.rstrip("/").split("/")[-1]
+            detail_url = f"{API_URL}{pokemon_id}"
+            response_pokemon = requests.get(detail_url)
             response_pokemon.raise_for_status()
             data_pokemon = response_pokemon.json()
             name = data_pokemon['name']
