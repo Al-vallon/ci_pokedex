@@ -1,7 +1,34 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 import requests
+from urllib.parse import urlparse
 API_URL = "https://pokeapi.co/api/v2/pokemon/"
+
+
+def _is_allowed_pokemon_detail_url(url):
+    try:
+        parsed = urlparse(url)
+    except Exception:
+        return False
+
+    if parsed.scheme != "https":
+        return False
+    if parsed.netloc != "pokeapi.co":
+        return False
+    if parsed.query or parsed.fragment:
+        return False
+
+    path = parsed.path.rstrip("/")
+    parts = path.split("/")
+    # expected: /api/v2/pokemon/<id>
+    if len(parts) != 5:
+        return False
+    if parts[1] != "api" or parts[2] != "v2" or parts[3] != "pokemon":
+        return False
+    if not parts[4].isdigit():
+        return False
+
+    return True
 
 def getAllPokemon(request):
     offset = request.GET.get("offset", 0)
@@ -27,6 +54,8 @@ def getAllPokemon(request):
     all_pokemons = []
     for pokemon in pokemons:
         pokemon_url = pokemon['url']
+        if not _is_allowed_pokemon_detail_url(pokemon_url):
+            continue
         try:
             response_pokemon = requests.get(pokemon_url)
             response_pokemon.raise_for_status()
@@ -87,6 +116,8 @@ def searchPokemon(request):
     all_pokemons = []
     for pokemon in matching_pokemons:
         pokemon_url = pokemon['url']
+        if not _is_allowed_pokemon_detail_url(pokemon_url):
+            continue
         try:
             response_pokemon = requests.get(pokemon_url)
             response_pokemon.raise_for_status()
