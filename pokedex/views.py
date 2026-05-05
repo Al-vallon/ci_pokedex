@@ -31,10 +31,22 @@ def _is_allowed_pokemon_detail_url(url):
     return True
 
 def getAllPokemon(request):
-    offset = request.GET.get("offset", 0)
-    limit = request.GET.get("limit", 20)
     try:
-        response = requests.get(f"{API_URL}?offset={offset}&limit={limit}")
+        offset = int(request.GET.get("offset", 0))
+    except (TypeError, ValueError):
+        offset = 0
+    if offset < 0:
+        offset = 0
+
+    try:
+        limit = int(request.GET.get("limit", 20))
+    except (TypeError, ValueError):
+        limit = 20
+    if limit < 1:
+        limit = 20
+
+    try:
+        response = requests.get(API_URL, params={"offset": offset, "limit": limit}, timeout=10)
         response.raise_for_status()
         data = response.json()
     except requests.exceptions.RequestException:
@@ -57,9 +69,9 @@ def getAllPokemon(request):
         if not _is_allowed_pokemon_detail_url(pokemon_url):
             continue
         try:
-            pokemon_id = pokemon_url.rstrip("/").split("/")[-1]
+            pokemon_id = int(pokemon_url.rstrip("/").split("/")[-1])
             detail_url = f"{API_URL}{pokemon_id}"
-            response_pokemon = requests.get(detail_url)
+            response_pokemon = requests.get(detail_url, timeout=10)
             response_pokemon.raise_for_status()
             data_pokemon = response_pokemon.json()
             name = data_pokemon['name']
@@ -68,7 +80,7 @@ def getAllPokemon(request):
                 'name': name,
                 'image_url': image_url,
             })
-        except requests.exceptions.RequestException:
+        except (ValueError, requests.exceptions.RequestException):
             continue
     return render(
         request,
