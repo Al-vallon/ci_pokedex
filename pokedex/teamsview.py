@@ -1,4 +1,6 @@
 import json
+import re
+from urllib.parse import quote
 from django.contrib import messages
 from django.shortcuts import render
 from pokedex.models import Teams
@@ -7,6 +9,18 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse, HttpResponse
 import requests
 from pokedex.views import API_URL
+
+
+POKEMON_NAME_PATTERN = re.compile(r'^[a-z0-9-]+$')
+
+
+def sanitize_pokemon_name(pokemon_name):
+    if not pokemon_name:
+        return None
+    normalized_name = str(pokemon_name).strip().lower()
+    if not POKEMON_NAME_PATTERN.fullmatch(normalized_name):
+        return None
+    return normalized_name
 
 
 @csrf_exempt
@@ -177,9 +191,10 @@ def battle(request):
         team2 = Teams.objects.get(id=team2_id)
 
         def get_pokemon_hp(pokemon_name):
-            if not pokemon_name:
+            safe_name = sanitize_pokemon_name(pokemon_name)
+            if not safe_name:
                 return 0
-            response = requests.get(f"{API_URL}/{pokemon_name}")
+            response = requests.get(f"{API_URL}/{quote(safe_name, safe='')}")
             if response.status_code == 200:
                 data = response.json()
                 return data['stats'][0]['base_stat']
@@ -243,9 +258,10 @@ def battle_page(request):
         team2 = Teams.objects.get(id=team2_id)
 
         def get_pokemon_hp(pokemon_name):
-            if not pokemon_name:
+            safe_name = sanitize_pokemon_name(pokemon_name)
+            if not safe_name:
                 return 0
-            response = requests.get(f"{API_URL}/{pokemon_name}")
+            response = requests.get(f"{API_URL}/{quote(safe_name, safe='')}")
             if response.status_code == 200:
                 data = response.json()
                 return data['stats'][0]['base_stat']
