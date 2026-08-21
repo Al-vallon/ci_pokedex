@@ -1,5 +1,5 @@
 django==5.2.16
-requests==2.32.4
+requests==2.33.0
 setuptools==83.0.0
 autopep8 == 2.3.2
 pytest==9.0.3
